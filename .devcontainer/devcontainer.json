@@ -1,0 +1,19 @@
+{
+    "name": "My Dev Container",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/spring-boot-api",
+    "shutdownAction": "stopCompose",
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "vscjava.vscode-java-pack",
+          "vscjava.vscode-gradle",
+          "mhutchie.git-graph",
+          "streetsidesoftware.code-spell-checker",
+          "mosapride.zenkaku",
+          "shengchen.vscode-checkstyle"
+        ]
+      }
+    }
+  }
