@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.example.spring_boot_api.dto.BookDto;
 import com.example.spring_boot_api.dto.BookResponseDto;
@@ -22,40 +24,48 @@ public class BookService {
     @Autowired
     private BookRepositoryCustom bookRepositoryCustom;
 
+    private static final Integer DEFAULT_START_INDEX = 0;
+    private static final Integer DEFAULT_MAX_RESULTS = 20;
+    private static final Sort DEFAULT_SORT = Sort.by("title").ascending();
+
     public List<BookDto> getBooks() {
         List<Book> books = bookRepository.findAll();
-        List<BookDto> booksDto =
-                books.stream().map(this::convertToDto).collect(Collectors.toList());
-        return booksDto;
+        return convertToDtoList(books);
     }
 
     public BookDto getBookById(String id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Book not found"));
-        BookDto bookDto = convertToDto(book);
-        return bookDto;
+        return convertToDto(book);
     }
 
-    public BookResponseDto searchByTitle(String q, Pageable pageable) {
+    public BookResponseDto searchByTitle(String q, Integer startIndex, Integer maxResults) {
+        Pageable pageable = createPageable(startIndex, maxResults);
         Page<Book> page = bookRepository.findByTitleContaining(q, pageable);
-
-        Integer totalItems = (int) page.getTotalElements();
-        List<Book> books = page.getContent();
-        List<BookDto> booksDto =
-                books.stream().map(this::convertToDto).collect(Collectors.toList());
-        BookResponseDto bookResponseDto = new BookResponseDto(totalItems, booksDto);
-        return bookResponseDto;
+        return createBookResponse(page);
     }
 
-    public BookResponseDto searchByGenreId(List<String> genreIds, Pageable pageable) {
+    public BookResponseDto searchByGenreId(List<String> genreIds, Integer startIndex,
+            Integer maxResults) {
+        Pageable pageable = createPageable(startIndex, maxResults);
         Page<Book> page = bookRepositoryCustom.findByGenreIds(genreIds, pageable);
+        return createBookResponse(page);
+    }
 
+    private Pageable createPageable(Integer startIndex, Integer maxResults) {
+        startIndex = (startIndex != null) ? startIndex : DEFAULT_START_INDEX;
+        maxResults = (maxResults != null) ? maxResults : DEFAULT_MAX_RESULTS;
+        return PageRequest.of(startIndex, maxResults, DEFAULT_SORT);
+    }
+
+    private BookResponseDto createBookResponse(Page<Book> page) {
         Integer totalItems = (int) page.getTotalElements();
-        List<Book> books = page.getContent();
-        List<BookDto> booksDto =
-                books.stream().map(this::convertToDto).collect(Collectors.toList());
-        BookResponseDto bookResponseDto = new BookResponseDto(totalItems, booksDto);
-        return bookResponseDto;
+        List<BookDto> booksDto = convertToDtoList(page.getContent());
+        return new BookResponseDto(totalItems, booksDto);
+    }
+
+    private List<BookDto> convertToDtoList(List<Book> books) {
+        return books.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
     private BookDto convertToDto(Book book) {
@@ -72,29 +82,6 @@ public class BookService {
         bookDto.setPageCount(book.getPageCount());
         bookDto.setIsbn(book.getIsbn());
         bookDto.setImageUrl(book.getImageUrl());
-
         return bookDto;
     }
-
-    // private Book convertToEntity(BookDto bookDto) {
-    // Book book = new Book();
-    // String id = RandomStringUtil.generateRandomString();
-    // book.setId(id);
-    // book.setTitle(bookDto.getTitle());
-    // book.setDescription(bookDto.getDescription());
-    // book.setAuthors(bookDto.getAuthors());
-    // book.setPublisher(book.getPublisher());
-    // book.setPublishedDate(bookDto.getPublishedDate());
-    // book.setPrice(bookDto.getPrice());
-    // book.setPageCount(bookDto.getPageCount());
-    // book.setIsbn(bookDto.getIsbn());
-    // book.setImageUrl("http://vsv-peridot.skygroup.local/my-books/images/" + id + ".jpg");
-
-    // book.setGenres(bookDto.getGenreIds().stream().map(genreId -> {
-    // Genre genre = new Genre();
-    // genre.setId(genreId);
-    // return genre;
-    // }).collect(Collectors.toSet()));
-    // return book;
-    // }
 }

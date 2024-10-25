@@ -24,5 +24,5 @@ public class Genre {
     private String description;
     private Timestamp createdAt;
     private Timestamp updatedAt;
-    private Boolean isActive;
+    private Boolean isDeleted;
 }

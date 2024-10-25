@@ -30,5 +30,5 @@ public class Book {
     private String imageUrl;
     private Timestamp createdAt;
     private Timestamp updatedAt;
-    private Boolean isActive;
+    private Boolean isDeleted;
 }
