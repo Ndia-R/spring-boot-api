@@ -1,8 +1,7 @@
 package com.example.spring_boot_api.service;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.example.spring_boot_api.dto.BookDto;
 import com.example.spring_boot_api.dto.BookResponseDto;
+import com.example.spring_boot_api.exception.NotFoundException;
+import com.example.spring_boot_api.mapper.BookMapper;
 import com.example.spring_boot_api.model.Book;
 import com.example.spring_boot_api.repository.BookRepository;
 import com.example.spring_boot_api.repository.BookRepositoryCustom;
@@ -24,32 +25,38 @@ public class BookService {
     @Autowired
     private BookRepositoryCustom bookRepositoryCustom;
 
+    @Autowired
+    private BookMapper bookMapper;
+
     private static final Integer DEFAULT_START_INDEX = 0;
     private static final Integer DEFAULT_MAX_RESULTS = 20;
     private static final Sort DEFAULT_SORT = Sort.by("title").ascending();
 
     public List<BookDto> getBooks() {
         List<Book> books = bookRepository.findAll();
-        return convertToDtoList(books);
+        List<BookDto> booksDto = bookMapper.toDtoList(books);
+        return booksDto;
     }
 
     public BookDto getBookById(String id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
-        return convertToDto(book);
+        Book book = findBookById(id);
+        BookDto bookDto = bookMapper.toDto(book);
+        return bookDto;
     }
 
     public BookResponseDto searchByTitle(String q, Integer startIndex, Integer maxResults) {
         Pageable pageable = createPageable(startIndex, maxResults);
-        Page<Book> page = bookRepository.findByTitleContaining(q, pageable);
-        return createBookResponse(page);
+        Page<Book> pageBook = bookRepository.findByTitleContaining(q, pageable);
+        BookResponseDto bookResponseDto = bookMapper.toResponseDto(pageBook);
+        return bookResponseDto;
     }
 
     public BookResponseDto searchByGenreId(List<String> genreIds, Integer startIndex,
             Integer maxResults) {
         Pageable pageable = createPageable(startIndex, maxResults);
-        Page<Book> page = bookRepositoryCustom.findByGenreIds(genreIds, pageable);
-        return createBookResponse(page);
+        Page<Book> pageBook = bookRepositoryCustom.findByGenreIds(genreIds, pageable);
+        BookResponseDto bookResponseDto = bookMapper.toResponseDto(pageBook);
+        return bookResponseDto;
     }
 
     private Pageable createPageable(Integer startIndex, Integer maxResults) {
@@ -58,30 +65,11 @@ public class BookService {
         return PageRequest.of(startIndex, maxResults, DEFAULT_SORT);
     }
 
-    private BookResponseDto createBookResponse(Page<Book> page) {
-        Integer totalItems = (int) page.getTotalElements();
-        List<BookDto> booksDto = convertToDtoList(page.getContent());
-        return new BookResponseDto(totalItems, booksDto);
-    }
-
-    private List<BookDto> convertToDtoList(List<Book> books) {
-        return books.stream().map(this::convertToDto).collect(Collectors.toList());
-    }
-
-    private BookDto convertToDto(Book book) {
-        BookDto bookDto = new BookDto();
-        bookDto.setId(book.getId());
-        bookDto.setTitle(book.getTitle());
-        bookDto.setDescription(book.getDescription());
-        bookDto.setGenreIds(Arrays.stream(book.getGenreIds().split(",")).map(Integer::parseInt)
-                .collect(Collectors.toList()));
-        bookDto.setAuthors(Arrays.asList(book.getAuthors().split(",")));
-        bookDto.setPublisher(book.getPublisher());
-        bookDto.setPublishedDate(book.getPublishedDate());
-        bookDto.setPrice(book.getPrice());
-        bookDto.setPageCount(book.getPageCount());
-        bookDto.setIsbn(book.getIsbn());
-        bookDto.setImageUrl(book.getImageUrl());
-        return bookDto;
+    private Book findBookById(String id) {
+        Optional<Book> found = bookRepository.findById(id);
+        if (found.isEmpty()) {
+            throw new NotFoundException("Not found with this ID: " + id);
+        }
+        return found.get();
     }
 }

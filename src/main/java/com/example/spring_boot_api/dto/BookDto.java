@@ -2,27 +2,19 @@ package com.example.spring_boot_api.dto;
 
 import java.sql.Date;
 import java.util.List;
+import com.example.spring_boot_api.shared.DtoBase;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-// ID
-// タイトル
-// 概要
-// ジャンルID
-// 作者
-// 出版社
-// 出版日
-// 価格
-// ページ数
-// ISBN
-// イメージ画像URL
+import lombok.experimental.SuperBuilder;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookDto {
-
+public class BookDto extends DtoBase {
     private String id;
     private String title;
     private String description;

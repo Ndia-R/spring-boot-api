@@ -22,6 +22,7 @@
     
     // スペルチェックの対象外にするワード
     "cSpell.words": [
+      "Cacheable",
       "checkstyle",
       "esbenp",
       "initdb",
