@@ -7,8 +7,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-import com.example.spring_boot_api.dto.BookDto;
-import com.example.spring_boot_api.dto.BookResponseDto;
+import com.example.spring_boot_api.dto.book.BookDto;
+import com.example.spring_boot_api.dto.book.BookResponseDto;
 import com.example.spring_boot_api.model.Book;
 
 @Component
@@ -48,8 +48,10 @@ public class BookMapper {
     }
 
     public BookResponseDto toResponseDto(Page<Book> pageBook) {
+        Integer page = pageBook.getNumber();
+        Integer totalPages = pageBook.getTotalPages();
         Integer totalItems = (int) pageBook.getTotalElements();
         List<BookDto> booksDto = toDtoList(pageBook.getContent());
-        return new BookResponseDto(totalItems, booksDto);
+        return new BookResponseDto(page, totalPages, totalItems, booksDto);
     }
 }

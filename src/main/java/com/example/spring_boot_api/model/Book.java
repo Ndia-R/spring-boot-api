@@ -20,18 +20,36 @@ import lombok.NoArgsConstructor;
 public class Book extends EntityBase {
 
     @Id
+    @Column(name = "id", nullable = false)
     private String id;
+
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "genre_ids", nullable = false)
     private String genreIds;
+
+    @Column(name = "authors", nullable = false)
     private String authors;
+
+    @Column(name = "publisher", nullable = false)
     private String publisher;
+
+    @Column(name = "published_date", nullable = false)
     private Date publishedDate;
+
+    @Column(name = "price", nullable = false)
     private Integer price;
+
+    @Column(name = "page_count", nullable = false)
     private Integer pageCount;
+
+    @Column(name = "isbn", nullable = false)
     private String isbn;
+
+    @Column(name = "image_url")
     private String imageUrl;
 }

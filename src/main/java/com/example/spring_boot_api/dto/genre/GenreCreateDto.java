@@ -1,4 +1,4 @@
-package com.example.spring_boot_api.dto;
+package com.example.spring_boot_api.dto.genre;
 
 import org.hibernate.validator.constraints.Length;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateGenreDto {
+public class GenreCreateDto {
     @NotNull
     @Length(max = 50)
     private String name;

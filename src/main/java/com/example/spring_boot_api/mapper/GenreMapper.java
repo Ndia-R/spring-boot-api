@@ -4,8 +4,8 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.example.spring_boot_api.dto.CreateGenreDto;
-import com.example.spring_boot_api.dto.GenreDto;
+import com.example.spring_boot_api.dto.genre.GenreCreateDto;
+import com.example.spring_boot_api.dto.genre.GenreDto;
 import com.example.spring_boot_api.model.Genre;
 
 @Component
@@ -26,7 +26,7 @@ public class GenreMapper {
         return genres.stream().map(genre -> toDto(genre)).toList();
     }
 
-    public Genre CreateDtoToEntity(CreateGenreDto createGenreDto) {
+    public Genre CreateDtoToEntity(GenreCreateDto createGenreDto) {
         return modelMapper.map(createGenreDto, Genre.class);
     }
 }

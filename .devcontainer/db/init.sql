@@ -7,19 +7,19 @@ USE `my-books-db`;
 DROP TABLE IF EXISTS `books`;
 CREATE TABLE `books` (
   `id` VARCHAR(255) NOT NULL,
-  `title` VARCHAR(255) NOT NULL,
+  `title` VARCHAR(255) NOT NULL DEFAULT '',
   `description` TEXT NOT NULL,
-  `genre_ids` VARCHAR(255) NOT NULL,
-  `authors` VARCHAR(255) NOT NULL,
-  `publisher` VARCHAR(255) NOT NULL,
+  `genre_ids` VARCHAR(255) NOT NULL DEFAULT '',
+  `authors` VARCHAR(255) NOT NULL DEFAULT '',
+  `publisher` VARCHAR(255) NOT NULL DEFAULT '',
   `published_date` DATE NOT NULL,
-  `price` int(11) NOT NULL,
-  `page_count` int(11) NOT NULL,
-  `isbn` VARCHAR(255) NOT NULL,
-  `image_url` VARCHAR(255) NOT NULL,
+  `price` INT(11) NOT NULL DEFAULT 0,
+  `page_count` INT(11) NOT NULL DEFAULT 0,
+  `isbn` VARCHAR(255) NOT NULL DEFAULT '',
+  `image_url` VARCHAR(255) DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `is_deleted` TINYINT(1) DEFAULT 0,
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 );
@@ -28,11 +28,11 @@ CREATE TABLE `books` (
 DROP TABLE IF EXISTS `genres`;
 CREATE TABLE `genres` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NOT NULL,
-  `description` TEXT,
+  `name` VARCHAR(255) NOT NULL DEFAULT '',
+  `description` TEXT NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `is_deleted` TINYINT(1) DEFAULT 0,
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) AUTO_INCREMENT=10;
 

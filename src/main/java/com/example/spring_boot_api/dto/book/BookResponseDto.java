@@ -1,4 +1,4 @@
-package com.example.spring_boot_api.dto;
+package com.example.spring_boot_api.dto.book;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookResponseDto {
+    private Integer page;
+    private Integer totalPages;
     private Integer totalItems;
     private List<BookDto> books;
 }

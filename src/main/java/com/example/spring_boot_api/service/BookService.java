@@ -8,8 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import com.example.spring_boot_api.dto.BookDto;
-import com.example.spring_boot_api.dto.BookResponseDto;
+import com.example.spring_boot_api.dto.book.BookDto;
+import com.example.spring_boot_api.dto.book.BookResponseDto;
 import com.example.spring_boot_api.exception.NotFoundException;
 import com.example.spring_boot_api.mapper.BookMapper;
 import com.example.spring_boot_api.model.Book;
@@ -28,7 +28,7 @@ public class BookService {
     @Autowired
     private BookMapper bookMapper;
 
-    private static final Integer DEFAULT_START_INDEX = 0;
+    private static final Integer DEFAULT_START_PAGE = 0;
     private static final Integer DEFAULT_MAX_RESULTS = 20;
     private static final Sort DEFAULT_SORT = Sort.by("title").ascending();
 
@@ -44,25 +44,25 @@ public class BookService {
         return bookDto;
     }
 
-    public BookResponseDto searchByTitle(String q, Integer startIndex, Integer maxResults) {
-        Pageable pageable = createPageable(startIndex, maxResults);
+    public BookResponseDto searchByTitle(String q, Integer page, Integer maxResults) {
+        Pageable pageable = createPageable(page, maxResults);
         Page<Book> pageBook = bookRepository.findByTitleContaining(q, pageable);
         BookResponseDto bookResponseDto = bookMapper.toResponseDto(pageBook);
         return bookResponseDto;
     }
 
-    public BookResponseDto searchByGenreId(List<String> genreIds, Integer startIndex,
+    public BookResponseDto searchByGenreId(List<String> genreIds, Integer page,
             Integer maxResults) {
-        Pageable pageable = createPageable(startIndex, maxResults);
+        Pageable pageable = createPageable(page, maxResults);
         Page<Book> pageBook = bookRepositoryCustom.findByGenreIds(genreIds, pageable);
         BookResponseDto bookResponseDto = bookMapper.toResponseDto(pageBook);
         return bookResponseDto;
     }
 
-    private Pageable createPageable(Integer startIndex, Integer maxResults) {
-        startIndex = (startIndex != null) ? startIndex : DEFAULT_START_INDEX;
+    private Pageable createPageable(Integer page, Integer maxResults) {
+        page = (page != null) ? page : DEFAULT_START_PAGE;
         maxResults = (maxResults != null) ? maxResults : DEFAULT_MAX_RESULTS;
-        return PageRequest.of(startIndex, maxResults, DEFAULT_SORT);
+        return PageRequest.of(page, maxResults, DEFAULT_SORT);
     }
 
     private Book findBookById(String id) {
