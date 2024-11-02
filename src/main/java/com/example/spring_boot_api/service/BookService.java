@@ -59,6 +59,12 @@ public class BookService {
         return bookResponseDto;
     }
 
+    public List<BookDto> getNewReleases() {
+        List<Book> books = bookRepository.findTop10ByOrderByPublishedDateDesc();
+        List<BookDto> booksDto = bookMapper.toDtoList(books);
+        return booksDto;
+    }
+
     private Pageable createPageable(Integer page, Integer maxResults) {
         page = (page != null) ? page : DEFAULT_START_PAGE;
         maxResults = (maxResults != null) ? maxResults : DEFAULT_MAX_RESULTS;

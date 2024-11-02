@@ -49,4 +49,10 @@ public class BookController {
         return ResponseEntity.ok(bookResponse);
     }
 
+    @GetMapping("/new-releases")
+    public ResponseEntity<List<BookDto>> getNewReleases() {
+        List<BookDto> books = bookService.getNewReleases();
+        return ResponseEntity.ok(books);
+    }
+
 }
